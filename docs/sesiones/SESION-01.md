@@ -14,7 +14,7 @@ Crear el entorno virtual (venv), inicializar Git, crear el archivo `requirements
 
 ### 1. Verificación del entorno
 Se confirmaron las herramientas disponibles:
-- Python 3.13.7 (el usuario mencionó 3.14 pero el sistema tiene 3.13.7)
+- Python 3.13.7
 - uv 0.11.16
 - Git 2.54.0
 

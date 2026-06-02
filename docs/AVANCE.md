@@ -1,6 +1,6 @@
 # 📊 Avance del Proyecto — PoC Monolito Modular
 
-**Última actualización:** 2026-05-28
+**Última actualización:** 2026-06-02
 
 ---
 
@@ -9,7 +9,7 @@
 | # | Sesión | Estado |
 |---|--------|--------|
 | 1 | El Cascarón y Dependencias | ✅ Completada |
-| 2 | Hola Mundo ASGI (Health Check) | ⏳ Pendiente |
+| 2 | Hola Mundo ASGI (Health Check) | ✅ Completada |
 
 ## Fase 2: Shared Kernel (Dominio Base)
 
