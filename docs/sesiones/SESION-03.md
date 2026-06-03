@@ -391,7 +391,7 @@ tests/
 
 **¿Por qué?** `EntityId` es el bloque fundamental de cualquier entidad DDD — todas las entidades del dominio (Usuario, Proyecto, Sprint, Historia de Usuario) heredarán de él. Las excepciones de dominio permiten que los casos de uso atrapen errores de negocio con un solo `except DomainError` sin mezclarlos con errores técnicos (`KeyError`, `TypeError`, etc.).
 
-**¿Cómo?** `EntityId` envuelve un `UUID` nativo de Python, es inmutable, comparable por valor y usable como clave en diccionarios. La jerarquía de excepciones hereda de `Exception` con tres subtipos semánticos que carry metadata estructurada (`entity_name`, `entity_id`). Todo validado con 12 tests unitarios.
+**¿Cómo?** `EntityId` envuelve un `UUID` nativo de Python, es inmutable, comparable por valor y usable como clave en diccionarios. La jerarquía de excepciones hereda de `Exception` con tres subtipos semánticos que contienen metadata estructurada (`entity_name`, `entity_id`). Todo validado con 12 tests unitarios.
 
 ## Comandos ejecutados en esta sesión
 
