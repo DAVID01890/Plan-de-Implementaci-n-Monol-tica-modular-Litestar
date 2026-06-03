@@ -18,6 +18,15 @@
 - Crear `base_value_objects.py` añadiendo `Email`, `NotEmptyString`, `PositiveInt`
 - Tests en `tests/shared_kernel/`
 
+## Formato de bitácora
+
+Cada sesión debe documentarse siguiendo la plantilla en `docs/sesiones/TEMPLATE.md`:
+- **Objetivo** + **Criterio de éxito** al inicio
+- **Implementación** con solo el código esencial y conceptos clave (sin explicación línea por línea)
+- **Tests** en tabla resumen
+- **Conclusión** reflexiva que conecte el qué, por qué y cómo en contexto del proyecto
+- **Decisiones técnicas** en tabla
+
 ## Comandos útiles
 
 ```powershell
