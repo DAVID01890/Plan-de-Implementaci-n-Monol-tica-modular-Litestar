@@ -24,7 +24,7 @@
 | # | Sesión | Estado |
 |---|--------|--------|
 | 6 | Entidad Usuario y Objetos de Valor de Rol | ✅ Completada |
-| 7 | El Puerto IdentityServicePort (Interfaz y Mock) | ⏳ Pendiente |
+| 7 | El Puerto IdentityServicePort (Interfaz y Mock) | ✅ Completada |
 
 ## Fase 4: Core de Scrum (Dominio Complejo)
 

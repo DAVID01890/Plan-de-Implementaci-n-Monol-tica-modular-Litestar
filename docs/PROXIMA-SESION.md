@@ -1,35 +1,28 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 7: El Puerto IdentityServicePort (Interfaz y Mock)
+## Sesión 8: Historias de Usuario y Estimación Fibonacci
 
-**Objetivo:** Definir el puerto (interfaz) `IdentityServicePort` y su implementación Mock para el módulo IdP.
+**Objetivo:** Crear las primeras entidades del dominio Scrum: `HistoriaDeUsuario` con estimación Fibonacci y su Value Object `StoryPoint`.
 
-**Criterio de éxito:** Tests que verifiquen el contrato del puerto usando el Mock.
+**Criterio de éxito:** Tests que verifiquen creación de historias, asignación de puntos Fibonacci y validación de valores permitidos.
 
 ## Estado actual del proyecto
 
 - ✅ Sesión 1: Estructura hexagonal y dependencias
 - ✅ Sesión 2: Health Check con Litestar (`GET /health`)
-- ✅ Sesión 3: `EntityId` (UUID v4) y excepciones base del dominio
-- ✅ Sesión 4: `Email`, `NotEmptyString`, `PositiveInt` (Value Objects genéricos)
-- ✅ Sesión 5: `DomainEvent` (base para eventos de dominio)
-- ✅ Sesión 6: `Usuario` con `UserId`, `UserRole` y reglas de negocio (activar, desactivar, cambiar rol)
+- ✅ Fase 2 (Shared Kernel): `EntityId`, excepciones, Value Objects genéricos, `DomainEvent`
+- ✅ Fase 3 (IdP): `Usuario`, `UserId`, `UserRole`, `IdentityServicePort` + Mock
 
 ## Contexto relevante
 
-- El puerto irá en `src/idp/ports/`
-- El mock irá en `src/idp/adapters/mock/`
-- El puerto define el contrato para operaciones sobre usuarios (crear, buscar por ID, buscar por email, listar, actualizar rol)
-- Tests en `tests/idp/`
+- El código irá en `src/scrum/domain/`
+- Crear `value_objects.py` con `StoryPoint` (1, 2, 3, 5, 8, 13, 21)
+- Crear `entities.py` con `HistoriaDeUsuario` (título, descripción, puntos, estado)
+- Tests en `tests/scrum/`
 
 ## Formato de bitácora
 
-Cada sesión debe documentarse siguiendo la plantilla en `docs/sesiones/TEMPLATE.md`:
-- **Objetivo** + **Criterio de éxito** al inicio
-- **Implementación** con solo el código esencial y conceptos clave (sin explicación línea por línea)
-- **Tests** en tabla resumen
-- **Conclusión** reflexiva que conecte el qué, por qué y cómo en contexto del proyecto
-- **Decisiones técnicas** en tabla
+Cada sesión debe documentarse siguiendo la plantilla en `docs/sesiones/TEMPLATE.md`.
 
 ## Comandos útiles
 
