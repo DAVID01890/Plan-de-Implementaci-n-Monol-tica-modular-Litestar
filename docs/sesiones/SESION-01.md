@@ -8,79 +8,39 @@
 
 ## Objetivo
 
-Crear el entorno virtual (venv), inicializar Git, crear el archivo `requirements.txt` con Litestar instalado y organizar la estructura de carpetas separando domain, ports, adapters y entrypoint.
+Crear el entorno virtual con `uv`, instalar Litestar, inicializar Git y organizar la estructura hexagonal de carpetas (domain/ports/adapters/entrypoint).
+
+---
 
 ## Implementación
 
-### 1. Verificación del entorno
-Se confirmaron las herramientas disponibles:
-- Python 3.13.7
-- uv 0.11.16
-- Git 2.54.0
+### Entorno y dependencias
 
-### 2. Creación del entorno virtual
-```bash
-uv venv .venv --python 3.13
-```
+- `uv venv .venv --python 3.13` — Entorno virtual con Python 3.13.7
+- `requirements.txt`: `litestar>=2.12,<3.0`, `pytest>=8.0`, `pytest-asyncio>=0.24`
+- `uv pip install -r requirements.txt` → 29 paquetes instalados (Litestar 2.22.0)
 
-### 3. Creación de `requirements.txt`
-```txt
-litestar>=2.12,<3.0
-pytest>=8.0
-pytest-asyncio>=0.24
-```
+### Estructura hexagonal
 
-Se instalaron las dependencias con:
-```bash
-uv pip install -r requirements.txt
-```
-Resultado: 29 paquetes instalados (Litestar 2.22.0, pytest 9.0.3, httpx 0.28.1, etc.)
-
-### 4. Estructura de carpetas (Arquitectura Hexagonal)
 ```
 src/
-  shared_kernel/
-    domain/         → Tipos base, excepciones, value objects genéricos
-    ports/          → Interfaces base
-  idp/
-    domain/         → Entidades y reglas del Identity Provider (usuarios, roles)
-    ports/          → Puerto IdentityServicePort
-    adapters/       → Implementaciones (Mock, SQLite, etc.)
-  scrum/
-    domain/         → Entidades del core de Scrum (HU, tareas, sprints, proyecto)
-    ports/          → Puertos del dominio Scrum
-    adapters/       → Implementaciones de persistencia y eventos
-  entrypoint/       → API Litestar (controladores, middlewares, configuración)
-tests/              → Tests unitarios y de integración
+  shared_kernel/   → Tipos base, value objects, interfaces (Domain/Ports)
+  idp/             → Identity Provider (Usuario, roles)
+  scrum/           → Core de Scrum (HU, tareas, sprints)
+  entrypoint/      → API Litestar (controladores, middlewares)
+tests/
 ```
 
-Se agregaron `__init__.py` en todos los directorios para habilitar imports.
+Se agregaron `__init__.py` en los 15 directorios para habilitar imports.
 
-### 5. Inicialización de Git
-```bash
-git init
-git add -A
-git commit -m "chore: initial project setup with hexagonal architecture"
-```
+### Git
 
-### 6. `.gitignore`
-Se creó ignorando `.venv/`, `__pycache__/`, `*.pyc`, `*.pyo`, `.env`, `*.db`, `*.sqlite`.
+- `git init` → commit inicial: `6c6b7c7`
+- `.gitignore`: `.venv/`, `__pycache__/`, `*.pyc`, `*.pyo`, `.env`, `*.db`
 
-## Criterio de Éxito
+---
 
-- ✅ Instalación de dependencias sin errores (29 paquetes instalados)
-- ✅ Estructura de directorios correcta con separación hexagonal
-
-## Decisiones Técnicas
-
-| Decisión | Opción | Razón |
-|----------|--------|-------|
-| Gestor de paquetes | `uv` | Más rápido que pip, el usuario ya lo tiene instalado |
-| Framework ASGI | Litestar 2.22 | Última versión estable, soporte nativo de DI y DTOs |
-| Python | 3.13.7 | Versión disponible en el sistema |
-| Estructura | Hexagonal (domain/ports/adapters/entrypoint) | Separación clara de capas, testabilidad, alineado con DDD |
-
-## Archivos creados/modificados
+## Archivos creados
 
 | Archivo | Acción |
 |---------|--------|
@@ -89,17 +49,14 @@ Se creó ignorando `.venv/`, `__pycache__/`, `*.pyc`, `*.pyo`, `.env`, `*.db`, `
 | `.gitignore` | Creado |
 | `src/**/__init__.py` | Creado (15 archivos) |
 
+---
+
 ## Conclusión
 
-**¿Qué?** Se creó la estructura completa del proyecto: entorno virtual, dependencias, arquitectura hexagonal de carpetas (domain/ports/adapters/entrypoint) e inicialización de Git.
+Esta sesión sentó las bases físicas del proyecto. La arquitectura hexagonal no es solo una estructura de carpetas: es una decisión de diseño que aísla el dominio del mundo exterior. Al separar `domain/` (reglas de negocio), `ports/` (contratos), `adapters/` (implementaciones técnicas) y `entrypoint/` (punto de entrada), garantizamos que las reglas de negocio se puedan testear sin depender de bases de datos, HTTP o frameworks. Litestar 2.22 como framework ASGI aporta tipado fuerte, DI nativa y DTOs sin necesidad de capas adicionales. Todo lo que sigue se construye sobre este esqueleto.
 
-**¿Por qué?** Para establecer una base sólida que separe responsabilidades por capa. La arquitectura hexagonal aísla el dominio de la infraestructura, permitiendo testear reglas de negocio sin depender de bases de datos, APIs o frameworks.
+---
 
-**¿Cómo?** Usando `uv` para el entorno virtual, instalando Litestar como framework ASGI, y organizando 4 módulos raíz (`shared_kernel`, `idp`, `scrum`, `entrypoint`) cada uno con su estructura hexagonal interna. Se agregaron `__init__.py` en todos los directorios para habilitar imports.
+## Próxima sesión
 
-## Estado del proyecto al cierre
-
-- Working tree limpio (`git status` limpio)
-- Último commit: `6c6b7c7` — `chore: initial project setup with hexagonal architecture`
-- Dependencias instaladas y funcionales
-- Listo para comenzar Sesión 2 (Health Check con Litestar)
+**Sesión 2: Health Check con Litestar** — `GET /health` y su test.
