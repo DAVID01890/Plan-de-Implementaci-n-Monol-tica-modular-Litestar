@@ -1,10 +1,10 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 6: Entidad Usuario y Objetos de Valor de Rol
+## Sesión 7: El Puerto IdentityServicePort (Interfaz y Mock)
 
-**Objetivo:** Crear la primera entidad del dominio IdP: `Usuario` con sus Value Objects (`UserId`, `UserRole`) y reglas de negocio asociadas.
+**Objetivo:** Definir el puerto (interfaz) `IdentityServicePort` y su implementación Mock para el módulo IdP.
 
-**Criterio de éxito:** Tests que verifiquen creación de usuarios, asignación de roles y validación de reglas de negocio.
+**Criterio de éxito:** Tests que verifiquen el contrato del puerto usando el Mock.
 
 ## Estado actual del proyecto
 
@@ -13,12 +13,13 @@
 - ✅ Sesión 3: `EntityId` (UUID v4) y excepciones base del dominio
 - ✅ Sesión 4: `Email`, `NotEmptyString`, `PositiveInt` (Value Objects genéricos)
 - ✅ Sesión 5: `DomainEvent` (base para eventos de dominio)
+- ✅ Sesión 6: `Usuario` con `UserId`, `UserRole` y reglas de negocio (activar, desactivar, cambiar rol)
 
 ## Contexto relevante
 
-- El código irá en `src/idp/domain/`
-- Crear `entities.py` con `Usuario` (hereda de `EntityId`)
-- Crear `value_objects.py` con `UserRole` (enum: `Admin`, `Developer`, `Viewer`)
+- El puerto irá en `src/idp/ports/`
+- El mock irá en `src/idp/adapters/mock/`
+- El puerto define el contrato para operaciones sobre usuarios (crear, buscar por ID, buscar por email, listar, actualizar rol)
 - Tests en `tests/idp/`
 
 ## Formato de bitácora
