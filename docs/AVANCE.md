@@ -1,6 +1,6 @@
 # 📊 Avance del Proyecto — PoC Monolito Modular
 
-**Última actualización:** 2026-06-02
+**Última actualización:** 2026-06-03
 
 ---
 
@@ -15,7 +15,7 @@
 
 | # | Sesión | Estado |
 |---|--------|--------|
-| 3 | Identificadores Únicos y Excepciones | ⏳ Pendiente |
+| 3 | Identificadores Únicos y Excepciones | ✅ Completada |
 | 4 | Tipos Primitivos (Objetos de Valor Genéricos) | ⏳ Pendiente |
 | 5 | Contratos de Eventos | ⏳ Pendiente |
 
