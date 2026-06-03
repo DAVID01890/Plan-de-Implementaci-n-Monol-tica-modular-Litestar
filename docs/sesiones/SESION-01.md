@@ -89,6 +89,14 @@ Se creó ignorando `.venv/`, `__pycache__/`, `*.pyc`, `*.pyo`, `.env`, `*.db`, `
 | `.gitignore` | Creado |
 | `src/**/__init__.py` | Creado (15 archivos) |
 
+## Conclusión
+
+**¿Qué?** Se creó la estructura completa del proyecto: entorno virtual, dependencias, arquitectura hexagonal de carpetas (domain/ports/adapters/entrypoint) e inicialización de Git.
+
+**¿Por qué?** Para establecer una base sólida que separe responsabilidades por capa. La arquitectura hexagonal aísla el dominio de la infraestructura, permitiendo testear reglas de negocio sin depender de bases de datos, APIs o frameworks.
+
+**¿Cómo?** Usando `uv` para el entorno virtual, instalando Litestar como framework ASGI, y organizando 4 módulos raíz (`shared_kernel`, `idp`, `scrum`, `entrypoint`) cada uno con su estructura hexagonal interna. Se agregaron `__init__.py` en todos los directorios para habilitar imports.
+
 ## Estado del proyecto al cierre
 
 - Working tree limpio (`git status` limpio)

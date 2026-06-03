@@ -171,6 +171,14 @@ tests/test_health.py::test_health_returns_200 PASSED
 
 ---
 
+## Conclusión
+
+**¿Qué?** Se implementó el endpoint `GET /health` con Litestar y su test correspondiente usando `TestClient`.
+
+**¿Por qué?** El health check es el punto de entrada mínimo para verificar que la aplicación ASGI arranca, responde y se puede testear. Sirve como prueba de que la cadena completa (framework → ruta → test) funciona antes de agregar lógica de dominio.
+
+**¿Cómo?** Creando una función `create_app()` que construye la app Litestar (patrón fábrica), registrando un handler con `@get("/health")`, y verificando con `TestClient` que devuelve HTTP 200 y `{"status": "ok"}`.
+
 ## Comandos ejecutados
 
 ```powershell
