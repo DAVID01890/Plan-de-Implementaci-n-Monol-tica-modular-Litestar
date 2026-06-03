@@ -1,10 +1,10 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 5: Contratos de Eventos
+## Sesión 6: Entidad Usuario y Objetos de Valor de Rol
 
-**Objetivo:** Definir las interfaces base para eventos de dominio (Domain Events) en el Shared Kernel.
+**Objetivo:** Crear la primera entidad del dominio IdP: `Usuario` con sus Value Objects (`UserId`, `UserRole`) y reglas de negocio asociadas.
 
-**Criterio de éxito:** Tests que verifiquen la creación, inspección y comparación de eventos de dominio.
+**Criterio de éxito:** Tests que verifiquen creación de usuarios, asignación de roles y validación de reglas de negocio.
 
 ## Estado actual del proyecto
 
@@ -12,12 +12,14 @@
 - ✅ Sesión 2: Health Check con Litestar (`GET /health`)
 - ✅ Sesión 3: `EntityId` (UUID v4) y excepciones base del dominio
 - ✅ Sesión 4: `Email`, `NotEmptyString`, `PositiveInt` (Value Objects genéricos)
+- ✅ Sesión 5: `DomainEvent` (base para eventos de dominio)
 
 ## Contexto relevante
 
-- Todo irá en `src/shared_kernel/domain/`
-- Crear `base_events.py` con `DomainEvent` y clases relacionadas
-- Tests en `tests/shared_kernel/`
+- El código irá en `src/idp/domain/`
+- Crear `entities.py` con `Usuario` (hereda de `EntityId`)
+- Crear `value_objects.py` con `UserRole` (enum: `Admin`, `Developer`, `Viewer`)
+- Tests en `tests/idp/`
 
 ## Formato de bitácora
 

@@ -17,7 +17,7 @@
 |---|--------|--------|
 | 3 | Identificadores Únicos y Excepciones | ✅ Completada |
 | 4 | Tipos Primitivos (Objetos de Valor Genéricos) | ✅ Completada |
-| 5 | Contratos de Eventos | ⏳ Pendiente |
+| 5 | Contratos de Eventos | ✅ Completada |
 
 ## Fase 3: Proveedor de Identidad (IdP — Dominio y Puerto)
 
