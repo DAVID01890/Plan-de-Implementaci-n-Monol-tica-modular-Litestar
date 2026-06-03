@@ -16,7 +16,7 @@
 | # | Sesión | Estado |
 |---|--------|--------|
 | 3 | Identificadores Únicos y Excepciones | ✅ Completada |
-| 4 | Tipos Primitivos (Objetos de Valor Genéricos) | ⏳ Pendiente |
+| 4 | Tipos Primitivos (Objetos de Valor Genéricos) | ✅ Completada |
 | 5 | Contratos de Eventos | ⏳ Pendiente |
 
 ## Fase 3: Proveedor de Identidad (IdP — Dominio y Puerto)
@@ -24,7 +24,7 @@
 | # | Sesión | Estado |
 |---|--------|--------|
 | 6 | Entidad Usuario y Objetos de Valor de Rol | ⏳ Pendiente |
-| 7 | El Puerto IdentityServicePort (Interfaz y Mock) | ⏳ Pendiente | 
+| 7 | El Puerto IdentityServicePort (Interfaz y Mock) | ⏳ Pendiente |
 
 ## Fase 4: Core de Scrum (Dominio Complejo)
 

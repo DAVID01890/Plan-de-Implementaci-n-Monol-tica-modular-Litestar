@@ -1,21 +1,22 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 4: Tipos Primitivos (Objetos de Valor Genéricos)
+## Sesión 5: Contratos de Eventos
 
-**Objetivo:** Crear objetos de valor genéricos reutilizables en el Shared Kernel: `Email`, `NotEmptyString`, `PositiveInt`.
+**Objetivo:** Definir las interfaces base para eventos de dominio (Domain Events) en el Shared Kernel.
 
-**Criterio de éxito:** Tests que verifiquen creación válida, validación y rechazo de valores inválidos.
+**Criterio de éxito:** Tests que verifiquen la creación, inspección y comparación de eventos de dominio.
 
 ## Estado actual del proyecto
 
 - ✅ Sesión 1: Estructura hexagonal y dependencias
 - ✅ Sesión 2: Health Check con Litestar (`GET /health`)
-- ✅ Sesión 3: `EntityId` (UUID v4) y excepciones base del dominio (`DomainError`, `NotFoundError`, `ValidationError`, `BusinessRuleError`)
+- ✅ Sesión 3: `EntityId` (UUID v4) y excepciones base del dominio
+- ✅ Sesión 4: `Email`, `NotEmptyString`, `PositiveInt` (Value Objects genéricos)
 
 ## Contexto relevante
 
 - Todo irá en `src/shared_kernel/domain/`
-- Crear `base_value_objects.py` añadiendo `Email`, `NotEmptyString`, `PositiveInt`
+- Crear `base_events.py` con `DomainEvent` y clases relacionadas
 - Tests en `tests/shared_kernel/`
 
 ## Formato de bitácora
