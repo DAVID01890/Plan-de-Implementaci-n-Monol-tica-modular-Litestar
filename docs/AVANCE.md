@@ -31,7 +31,7 @@
 | # | Sesión | Estado |
 |---|--------|--------|
 | 8 | Historias de Usuario y Estimación Fibonacci | ✅ Completada |
-| 9 | Tareas Técnicas y Cohesión | ⏳ Pendiente |
+| 9 | Tareas Técnicas y Cohesión | ✅ Completada |
 | 10 | El Agregado Proyecto y el Sprint (Exclusividad Temporal) | ⏳ Pendiente |
 
 ## Fase 5: Adaptadores de Persistencia y Base de Datos

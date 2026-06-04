@@ -1,10 +1,10 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 9: Tareas Técnicas y Cohesión
+## Sesión 10: El Agregado Proyecto y el Sprint (Exclusividad Temporal)
 
-**Objetivo:** Descomponer una Historia en tareas técnicas con su propio estado y estimación.
+**Objetivo:** Crear el agregado `Proyecto` que contendrá Sprints con sus Historias de Usuario y Tareas Técnicas. Modelar la exclusividad temporal (una historia no puede estar en dos sprints a la vez).
 
-**Criterio de éxito:** Tests que verifiquen creación de tareas, asignación a una historia, y control de estado individual.
+**Criterio de éxito:** Tests que verifiquen creación de proyecto, inicio/cierre de sprint, asignación de historias a sprints, y validación de que una historia no se asigne a dos sprints activos.
 
 ## Estado actual del proyecto
 
@@ -13,13 +13,14 @@
 - ✅ Fase 2 (Shared Kernel): `EntityId`, excepciones, Value Objects genéricos, `DomainEvent`
 - ✅ Fase 3 (IdP): `Usuario`, `UserId`, `UserRole`, `IdentityServicePort` + Mock
 - ✅ Sesión 8: `StoryPoint`, `HistoriaDeUsuario`, workflow de estados
+- ✅ Sesión 9: `HorasEstimadas`, `TareaTecnica`, relación historia-tarea
 
 ## Contexto relevante
 
 - El código irá en `src/scrum/domain/`
-- Crear `TareaTecnica` como entidad ligada a `HistoriaDeUsuario`
-- Crear su Value Object de estimación (horas o puntos pequeños)
-- Refinar el modelo de estado para tareas
+- Crear `SprintId`, `Sprint` con fechas, backlog y estado
+- Crear `Proyecto` como raíz del agregado con colecciones de Sprints e Historias
+- Validar que una historia no esté en dos sprints abiertos simultáneamente
 - Tests en `tests/scrum/`
 
 ## Formato de bitácora

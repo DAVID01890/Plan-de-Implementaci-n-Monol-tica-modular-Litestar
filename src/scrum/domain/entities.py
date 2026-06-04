@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from src.scrum.domain.value_objects import StoryPoint
+from src.scrum.domain.value_objects import HorasEstimadas, StoryPoint
 from src.shared_kernel.domain.base_exceptions import BusinessRuleError
 from src.shared_kernel.domain.base_value_objects import EntityId, NotEmptyString
 
@@ -96,4 +96,96 @@ class HistoriaDeUsuario:
             f"id={self._id!r}, "
             f"title={self._title!r}, "
             f"points={self._story_points!r})"
+        )
+
+
+class TareaTecnicaId(EntityId):
+    pass
+
+
+class TareaTecnicaStatus(Enum):
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"
+
+
+class TareaTecnica:
+    _id: TareaTecnicaId
+    _historia_id: HistoriaId
+    _title: NotEmptyString
+    _description: str | None
+    _estimated_hours: HorasEstimadas
+    _status: TareaTecnicaStatus
+
+    def __init__(
+        self,
+        historia_id: HistoriaId,
+        title: NotEmptyString,
+        estimated_hours: HorasEstimadas,
+        description: str | None = None,
+        status: TareaTecnicaStatus = TareaTecnicaStatus.PENDING,
+        id: TareaTecnicaId | None = None,
+    ) -> None:
+        self._id = id if id is not None else TareaTecnicaId()
+        self._historia_id = historia_id
+        self._title = title
+        self._description = description
+        self._estimated_hours = estimated_hours
+        self._status = status
+
+    @property
+    def id(self) -> TareaTecnicaId:
+        return self._id
+
+    @property
+    def historia_id(self) -> HistoriaId:
+        return self._historia_id
+
+    @property
+    def title(self) -> NotEmptyString:
+        return self._title
+
+    @property
+    def description(self) -> str | None:
+        return self._description
+
+    @property
+    def estimated_hours(self) -> HorasEstimadas:
+        return self._estimated_hours
+
+    @property
+    def status(self) -> TareaTecnicaStatus:
+        return self._status
+
+    def start_work(self) -> None:
+        if self._status != TareaTecnicaStatus.PENDING:
+            raise BusinessRuleError(
+                f"Cannot start work on a {self._status.value} tarea"
+            )
+        self._status = TareaTecnicaStatus.IN_PROGRESS
+
+    def complete(self) -> None:
+        if self._status != TareaTecnicaStatus.IN_PROGRESS:
+            raise BusinessRuleError(
+                f"Cannot complete a {self._status.value} tarea"
+            )
+        self._status = TareaTecnicaStatus.DONE
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, TareaTecnica):
+            return NotImplemented
+        return self._id == other._id
+
+    def __hash__(self) -> int:
+        return hash(self._id)
+
+    def __str__(self) -> str:
+        return f"TareaTecnica({self._id}, {self._title})"
+
+    def __repr__(self) -> str:
+        return (
+            f"TareaTecnica("
+            f"id={self._id!r}, "
+            f"historia_id={self._historia_id!r}, "
+            f"title={self._title!r})"
         )
