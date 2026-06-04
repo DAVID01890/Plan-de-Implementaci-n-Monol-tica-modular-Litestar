@@ -4,3 +4,4 @@ pytest-asyncio>=0.24
 aiosqlite>=0.20
 libsql-client>=0.3
 alembic>=1.14
+python-dotenv>=1.0

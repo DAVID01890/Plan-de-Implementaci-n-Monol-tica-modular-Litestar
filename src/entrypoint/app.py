@@ -3,8 +3,12 @@ from __future__ import annotations
 import os
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
+from dotenv import load_dotenv
 from litestar import Litestar, get
+
+load_dotenv(Path(__file__).parents[3] / ".env")
 
 from src.entrypoint.scrum.handlers import (
     add_historia,
