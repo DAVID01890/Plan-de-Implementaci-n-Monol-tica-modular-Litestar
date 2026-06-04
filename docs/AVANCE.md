@@ -1,6 +1,6 @@
 # 📊 Avance del Proyecto — PoC Monolito Modular
 
-**Última actualización:** 2026-06-03
+**Última actualización:** 2026-06-04
 
 ---
 
@@ -30,7 +30,7 @@
 
 | # | Sesión | Estado |
 |---|--------|--------|
-| 8 | Historias de Usuario y Estimación Fibonacci | ⏳ Pendiente |
+| 8 | Historias de Usuario y Estimación Fibonacci | ✅ Completada |
 | 9 | Tareas Técnicas y Cohesión | ⏳ Pendiente |
 | 10 | El Agregado Proyecto y el Sprint (Exclusividad Temporal) | ⏳ Pendiente |
 
