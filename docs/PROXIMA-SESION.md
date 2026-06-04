@@ -1,27 +1,27 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 10: El Agregado Proyecto y el Sprint (Exclusividad Temporal)
+## Sesión 14: Handlers Reales del Outbox (Integración)
 
-**Objetivo:** Crear el agregado `Proyecto` que contendrá Sprints con sus Historias de Usuario y Tareas Técnicas. Modelar la exclusividad temporal (una historia no puede estar en dos sprints a la vez).
+**Objetivo:** Conectar el worker del outbox a handlers reales: enviar eventos a un webhook externo, actualizar proyecciones de lectura (CQRS), o enviar notificaciones.
 
-**Criterio de éxito:** Tests que verifiquen creación de proyecto, inicio/cierre de sprint, asignación de historias a sprints, y validación de que una historia no se asigne a dos sprints activos.
+**Criterio de éxito:** Eventos del outbox disparan acciones concretas (ej. log estructurado, webhook HTTP, actualización de tabla de proyección).
 
 ## Estado actual del proyecto
 
-- ✅ Sesión 1: Estructura hexagonal y dependencias
-- ✅ Sesión 2: Health Check con Litestar (`GET /health`)
-- ✅ Fase 2 (Shared Kernel): `EntityId`, excepciones, Value Objects genéricos, `DomainEvent`
-- ✅ Fase 3 (IdP): `Usuario`, `UserId`, `UserRole`, `IdentityServicePort` + Mock
-- ✅ Sesión 8: `StoryPoint`, `HistoriaDeUsuario`, workflow de estados
-- ✅ Sesión 9: `HorasEstimadas`, `TareaTecnica`, relación historia-tarea
+- ✅ Sesión 1-9: Estructura, Shared Kernel, IdP, Scrum domain
+- ✅ Sesión 10: `Proyecto` aggregate, `Sprint`, exclusividad temporal
+- ✅ Sesión 11: `connection.py`, `schema.py`, Alembic migraciones
+- ✅ Sesión 12: Repositorios SQLite + Turso, API REST (9 endpoints), DI Litestar
+- ✅ Sesión 13: Transactional Outbox (eventos, tabla, insert atómico, worker background)
+- Suite: **200 tests passing, 1 skipped** (Turso sin credenciales)
 
 ## Contexto relevante
 
-- El código irá en `src/scrum/domain/`
-- Crear `SprintId`, `Sprint` con fechas, backlog y estado
-- Crear `Proyecto` como raíz del agregado con colecciones de Sprints e Historias
-- Validar que una historia no esté en dos sprints abiertos simultáneamente
-- Tests en `tests/scrum/`
+- El worker (`OutboxWorker`) ya corre en el lifespan de Litestar
+- Actualmente el handler es no-op (solo log)
+- El outbox persiste 5 tipos de evento: `proyecto.creado`, `proyecto.historia.agregada`, `proyecto.sprint.creado`, `proyecto.sprint.iniciado`, `proyecto.sprint.historia_asignada`
+- Cada evento tiene `to_dict()` para serialización JSON
+- `OutboxClient` abstracto con impls SQLite y Turso
 
 ## Formato de bitácora
 
@@ -30,6 +30,6 @@ Cada sesión debe documentarse siguiendo la plantilla en `docs/sesiones/TEMPLATE
 ## Comandos útiles
 
 ```powershell
-uv run pytest -v
-uv run litestar run --reload
+.venv\Scripts\pytest -v
+python -m uvicorn src.entrypoint.app:create_app --factory --host 127.0.0.1 --port 8000
 ```

@@ -1,6 +1,6 @@
 # 📊 Avance del Proyecto — PoC Monolito Modular
 
-**Última actualización:** 2026-06-04
+**Última actualización:** 2026-06-04 (Sesión 13 completada)
 
 ---
 
@@ -32,21 +32,21 @@
 |---|--------|--------|
 | 8 | Historias de Usuario y Estimación Fibonacci | ✅ Completada |
 | 9 | Tareas Técnicas y Cohesión | ✅ Completada |
-| 10 | El Agregado Proyecto y el Sprint (Exclusividad Temporal) | ⏳ Pendiente |
+| 10 | El Agregado Proyecto y el Sprint (Exclusividad Temporal) | ✅ Completada |
 
 ## Fase 5: Adaptadores de Persistencia y Base de Datos
 
 | # | Sesión | Estado |
 |---|--------|--------|
-| 11 | Configuración de Base de Datos Local y Migraciones | ⏳ Pendiente |
-| 12 | Repositorio Scrum (Guardar y Leer) | ⏳ Pendiente |
+| 11 | Configuración de Base de Datos Local y Migraciones | ✅ Completada |
+| 12 | Repositorio Scrum (Guardar y Leer) + API REST | ✅ Completada |
 
 ## Fase 6: Eventos y Consistencia Eventual (Transactional Outbox)
 
 | # | Sesión | Estado |
 |---|--------|--------|
-| 13 | La Tabla y el Insert del Outbox | ⏳ Pendiente |
-| 14 | La Tarea en Segundo Plano (Background Task) | ⏳ Pendiente |
+| 13 | La Tabla y el Insert del Outbox + Background Worker | ✅ Completada |
+| 14 | Handlers Reales del Outbox (Integración) | ⏳ Pendiente |
 
 ## Fase 7: Litestar (API) e Inyección de Dependencias
 

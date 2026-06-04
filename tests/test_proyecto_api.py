@@ -1,0 +1,121 @@
+import os
+import tempfile
+import uuid
+
+from litestar.testing import TestClient
+
+from src.entrypoint.app import create_app
+
+
+def _client():
+    os.environ.pop("TURSO_DATABASE_URL", None)
+    os.environ.pop("TURSO_AUTH_TOKEN", None)
+    os.environ.pop("SKIP_DB_INIT", None)
+    db_path = os.path.join(tempfile.gettempdir(), f"test_proyectos_{uuid.uuid4().hex}.db")
+    os.environ["SQLITE_PATH"] = db_path
+    app = create_app()
+    return TestClient(app)
+
+
+def test_create_proyecto() -> None:
+    with _client() as client:
+        response = client.post("/proyectos", json={"nombre": "Mi Proyecto"})
+    assert response.status_code == 201
+    data = response.json()
+    assert data["nombre"] == "Mi Proyecto"
+    assert "id" in data
+
+
+def test_get_proyecto() -> None:
+    with _client() as client:
+        created = client.post("/proyectos", json={"nombre": "Test"}).json()
+        response = client.get(f"/proyectos/{created['id']}")
+    assert response.status_code == 200
+    assert response.json()["nombre"] == "Test"
+
+
+def test_get_nonexistent_proyecto() -> None:
+    with _client() as client:
+        response = client.get("/proyectos/00000000-0000-0000-0000-000000000000")
+    assert response.status_code == 404
+
+
+def test_delete_proyecto() -> None:
+    with _client() as client:
+        created = client.post("/proyectos", json={"nombre": "To Delete"}).json()
+        delete_resp = client.delete(f"/proyectos/{created['id']}")
+        get_resp = client.get(f"/proyectos/{created['id']}")
+    assert delete_resp.status_code == 200
+    assert get_resp.status_code == 404
+
+
+def test_create_proyecto_with_invalid_nombre() -> None:
+    with _client() as client:
+        response = client.post("/proyectos", json={"nombre": ""})
+    assert response.status_code == 400
+
+
+def test_add_historia() -> None:
+    with _client() as client:
+        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        response = client.post(
+            f"/proyectos/{proyecto['id']}/historias",
+            json={"titulo": "Feature 1", "story_points": 5},
+        )
+    assert response.status_code == 201
+    data = response.json()
+    assert len(data["historias"]) == 1
+    assert data["historias"][0]["titulo"] == "Feature 1"
+
+
+def test_create_sprint() -> None:
+    with _client() as client:
+        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        response = client.post(
+            f"/proyectos/{proyecto['id']}/sprints",
+            json={"nombre": "Sprint 1"},
+        )
+    assert response.status_code == 201
+    data = response.json()
+    assert len(data["sprints"]) == 1
+    assert data["sprints"][0]["nombre"] == "Sprint 1"
+
+
+def test_add_historia_to_sprint() -> None:
+    with _client() as client:
+        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        historia = client.post(
+            f"/proyectos/{proyecto['id']}/historias",
+            json={"titulo": "H", "story_points": 3},
+        ).json()
+        sprint = client.post(
+            f"/proyectos/{proyecto['id']}/sprints",
+            json={"nombre": "S1"},
+        ).json()
+        response = client.post(
+            f"/proyectos/{proyecto['id']}/sprints/historias",
+            json={
+                "historia_id": historia["historias"][0]["id"],
+                "sprint_id": sprint["sprints"][0]["id"],
+            },
+        )
+    assert response.status_code == 201
+    sprint_data = response.json()["sprints"][0]
+    assert len(sprint_data["backlog"]) == 1
+
+
+def test_start_sprint() -> None:
+    with _client() as client:
+        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        sprint = client.post(
+            f"/proyectos/{proyecto['id']}/sprints",
+            json={"nombre": "S1"},
+        ).json()
+        sprint_id = sprint["sprints"][0]["id"]
+        response = client.post(
+            f"/proyectos/{proyecto['id']}/sprints/{sprint_id}/start"
+        )
+    assert response.status_code == 201
+    sprint_data = response.json()["sprints"][0]
+    assert sprint_data["status"] == "active"
+    assert sprint_data["fecha_inicio"] is not None
