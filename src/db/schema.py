@@ -49,4 +49,14 @@ CREATE TABLE IF NOT EXISTS outbox_events (
     processed_at TEXT,
     created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS proyecto_read_model (
+    proyecto_id TEXT PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    total_historias INTEGER NOT NULL DEFAULT 0,
+    total_story_points INTEGER NOT NULL DEFAULT 0,
+    sprint_actual_id TEXT,
+    sprint_actual_nombre TEXT,
+    updated_at TEXT NOT NULL
+);
 """

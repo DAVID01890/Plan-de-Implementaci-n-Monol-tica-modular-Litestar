@@ -72,9 +72,21 @@ async def lifespan(app: Litestar) -> AsyncGenerator[None, None]:
         await conn.execute("PRAGMA foreign_keys=ON")
         outbox_client = SqliteOutboxClient(conn)
 
+    from src.scrum.infrastructure.outbox_handlers import (
+        LoggingHandler,
+        ProjectionHandler,
+        WebhookHandler,
+    )
     from src.scrum.infrastructure.outbox_worker import OutboxWorker
 
-    worker = OutboxWorker(outbox_client)
+    handlers: list = [LoggingHandler()]
+    webhook_url = os.getenv("OUTBOX_WEBHOOK_URL")
+    if webhook_url:
+        handlers.append(WebhookHandler(webhook_url))
+    if not is_turso_enabled():
+        handlers.append(ProjectionHandler(conn))
+
+    worker = OutboxWorker(outbox_client, handlers=handlers)
     await worker.start()
     try:
         yield

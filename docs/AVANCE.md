@@ -1,6 +1,6 @@
 # 📊 Avance del Proyecto — PoC Monolito Modular
 
-**Última actualización:** 2026-06-04 (Sesión 13 completada)
+**Última actualización:** 2026-06-05 (Sesión 14 completada)
 
 ---
 
@@ -46,7 +46,7 @@
 | # | Sesión | Estado |
 |---|--------|--------|
 | 13 | La Tabla y el Insert del Outbox + Background Worker | ✅ Completada |
-| 14 | Handlers Reales del Outbox (Integración) | ⏳ Pendiente |
+| 14 | Handlers Reales del Outbox (Integración) | ✅ Completada |
 
 ## Fase 7: Litestar (API) e Inyección de Dependencias
 

@@ -4,14 +4,22 @@ import asyncio
 import logging
 
 from src.scrum.infrastructure.outbox import OutboxClient
+from src.scrum.infrastructure.outbox_handlers import OutboxEventHandler
+from src.shared_kernel.domain.base_events import DomainEvent
 
 logger = logging.getLogger(__name__)
 
 
 class OutboxWorker:
-    def __init__(self, client: OutboxClient, poll_interval: float = 3.0) -> None:
+    def __init__(
+        self,
+        client: OutboxClient,
+        poll_interval: float = 3.0,
+        handlers: list[OutboxEventHandler] | None = None,
+    ) -> None:
         self._client = client
         self._poll_interval = poll_interval
+        self._handlers = handlers or []
         self._task: asyncio.Task[None] | None = None
         self._running = False
 
@@ -57,5 +65,13 @@ class OutboxWorker:
             except Exception:
                 logger.exception("Failed to process outbox event %s", event.id)
 
-    async def _handle_event(self, event: object) -> None:
-        logger.debug("Event %s handled (no-op)", type(event).__name__)
+    async def _handle_event(self, event: DomainEvent) -> None:
+        for handler in self._handlers:
+            try:
+                await handler.handle(event)
+            except Exception:
+                logger.exception(
+                    "Handler %s failed for event %s",
+                    type(handler).__name__,
+                    type(event).__name__,
+                )
