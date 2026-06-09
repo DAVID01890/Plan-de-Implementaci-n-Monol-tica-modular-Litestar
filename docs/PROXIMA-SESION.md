@@ -1,10 +1,10 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 18: CORS, Seguridad y Variables de Entorno
+## Sesión 19: Testing y Refinamiento
 
-**Objetivo:** Agregar CORS middleware, security headers (helmet-like), mover JWT secret a variable de entorno, y conectar `AUTH_PROVIDER` al Settings.
+**Objetivo:** Agregar tests para auth (login/register, token inválido, expirado), mejorar cobertura de middleware, y refinar manejo de errores.
 
-**Criterio de éxito:** Frontend puede consumir la API desde otro origen; headers de seguridad activos; JWT secret configurable desde `.env`.
+**Criterio de éxito:** Tests cubren flujos de auth (registro, login, token inválido, sin token); cobertura >90% en módulos entrypoint.
 
 ## Estado actual del proyecto
 
@@ -16,17 +16,17 @@
 - ✅ Sesión 14: Handlers reales del outbox (LoggingHandler, WebhookHandler, ProjectionHandler)
 - ✅ Sesión 15: Configuración centralizada (Settings dataclass, plugins Litestar, eliminar deprecation warnings)
 - ✅ Sesión 16: Controladores HTTP (ProyectoController) + RequestLoggingMiddleware
-- ✅ **Sesión 17: Auth JWT** — Login, Register, JWTAuth middleware, password hashing (bcrypt)
+- ✅ Sesión 17: Auth JWT — Login, Register, JWTAuth middleware, password hashing (bcrypt)
+- ✅ **Sesión 18: CORS, Seguridad y Variables de Entorno** — CORS, security headers, JWT secret desde env, AUTH_PROVIDER
 - Suite: **212 tests passing, 0 skipped, 0 warnings**
 
 ## Contexto relevante
 
-- `src/entrypoint/auth/` contiene todo el módulo de autenticación
-- `JWTAuth` protege todas las rutas excepto `/health`, `/auth/login`, `/auth/register`, `/schema`
-- JWT secret hardcodeado en `auth/config.py` → mover a `.env`
-- No hay CORS configurado → bloquea requests desde frontend en otro origen
-- No hay security headers (X-Content-Type-Options, X-Frame-Options, etc.)
-- `Settings` tiene `is_turso_enabled` pero no `AUTH_PROVIDER`
+- CORS abierto (`allow_origins=["*"]`) — restringir antes de producción
+- Security headers activos: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
+- `.env` acepta `JWT_SECRET`, `JWT_ALGORITHM`, `AUTH_PROVIDER`
+- `AUTH_PROVIDER` declarado en Settings pero sin efecto todavía
+- Faltan tests específicos para auth (login fallido, token expirado, rutas sin auth)
 
 ## Formato de bitácora
 

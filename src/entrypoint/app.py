@@ -6,12 +6,13 @@ from pathlib import Path
 
 from litestar import Litestar, get
 from litestar.config.app import AppConfig
+from litestar.config.cors import CORSConfig
 from litestar.di import Provide
 
 from src.entrypoint.auth.guards import jwt_auth
 from src.entrypoint.auth.handlers import login, register
 from src.entrypoint.config import Settings
-from src.entrypoint.middleware import RequestLoggingMiddleware
+from src.entrypoint.middleware import RequestLoggingMiddleware, SecurityHeadersMiddleware
 from src.entrypoint.scrum.handlers import ProyectoController
 
 
@@ -105,7 +106,9 @@ def _on_app_init(app_config: AppConfig) -> AppConfig:
 
 
 def create_app() -> Litestar:
+    cors_config = CORSConfig(allow_origins=["*"], allow_credentials=True, max_age=3600)
     return Litestar(
+        cors_config=cors_config,
         route_handlers=[
             health,
             login,
@@ -113,5 +116,5 @@ def create_app() -> Litestar:
             ProyectoController,
         ],
         on_app_init=[_on_app_init, jwt_auth.on_app_init],
-        middleware=[RequestLoggingMiddleware],
+        middleware=[RequestLoggingMiddleware, SecurityHeadersMiddleware],
     )

@@ -15,6 +15,8 @@ class Settings:
     outbox_webhook_url: str = ""
     skip_db_init: bool = False
     debug: bool = False
+    auth_provider: str = "internal"
+    jwt_secret: str = "CHANGE-ME-IN-PRODUCTION--32bytes!"
 
     @classmethod
     def from_env(cls, env_file: str | None = None) -> Settings:
@@ -27,6 +29,8 @@ class Settings:
             outbox_webhook_url=os.getenv("OUTBOX_WEBHOOK_URL", ""),
             skip_db_init=os.getenv("SKIP_DB_INIT") == "1",
             debug=os.getenv("DEBUG") == "1",
+            auth_provider=os.getenv("AUTH_PROVIDER", "internal"),
+            jwt_secret=os.getenv("JWT_SECRET", "CHANGE-ME-IN-PRODUCTION--32bytes!"),
         )
 
     @property
