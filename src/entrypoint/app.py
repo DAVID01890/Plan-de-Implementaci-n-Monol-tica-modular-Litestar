@@ -17,8 +17,22 @@ from src.entrypoint.scrum.handlers import ProyectoController
 
 
 @get("/health")
-async def health() -> dict[str, str]:
-    return {"status": "ok"}
+async def health(settings: Settings) -> dict[str, str]:
+    try:
+        if settings.is_turso_enabled:
+            from libsql_client import create_client
+            url = settings.turso_url.replace("libsql://", "https://", 1)
+            client = create_client(url=url, auth_token=settings.turso_token)
+            await client.execute("SELECT 1")
+            await client.close()
+        else:
+            from src.db.pool import get_pool as _get_pool
+            pool = await _get_pool(settings)
+            async with pool.connection() as conn:
+                await conn.execute("SELECT 1")
+        return {"status": "ok", "database": "connected"}
+    except Exception as e:
+        return {"status": "degraded", "database": str(e)}
 
 
 @get("/debug/profile", exclude_from_auth=True)

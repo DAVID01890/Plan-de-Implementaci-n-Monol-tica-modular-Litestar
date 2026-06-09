@@ -86,7 +86,9 @@ def test_health_is_public() -> None:
     with _client() as client:
         response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "database" in data
 
 
 def test_auth_routes_are_public() -> None:

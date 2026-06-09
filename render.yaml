@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: plan-implementacion
+    runtime: image
+    repo: https://github.com/DAVID01890/Plan-de-Implementaci-n-Monol-tica-modular-Litestar
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AUTH_PROVIDER
+        value: internal
+      - key: PORT
+        value: 8000
