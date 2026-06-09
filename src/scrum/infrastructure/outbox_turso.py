@@ -23,14 +23,18 @@ class TursoOutboxClient(OutboxClient):
                 event_id = row["id"]
             except (KeyError, IndexError, TypeError):
                 continue
-            events.append(
+                try:
+                    processed_at = row["processed_at"]
+                except (KeyError, IndexError, TypeError):
+                    processed_at = None
+                events.append(
                 OutboxEvent(
                     id=event_id,
                     aggregate_id=row["aggregate_id"],
                     event_type=row["event_type"],
                     payload=row["payload"],
                     occurred_at=row["occurred_at"],
-                    processed_at=row.get("processed_at"),
+                    processed_at=processed_at,
                     created_at=row["created_at"],
                 )
             )

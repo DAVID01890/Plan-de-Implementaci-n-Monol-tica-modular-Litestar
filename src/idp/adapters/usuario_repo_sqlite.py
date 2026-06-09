@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 from src.db.connection import get_sqlite_connection
@@ -8,10 +9,21 @@ from src.idp.domain.value_objects import UserId, UserRole
 from src.idp.ports.usuario_repository import UsuarioRepository
 from src.shared_kernel.domain.base_value_objects import Email, NotEmptyString
 
+if TYPE_CHECKING:
+    from src.db.pool import AsyncSQLitePool
+
 
 class UsuarioRepositorySQLite(UsuarioRepository):
+    def __init__(self, pool: AsyncSQLitePool | None = None) -> None:
+        self._pool = pool
+
+    def _conn(self):
+        if self._pool is not None:
+            return self._pool.connection()
+        return get_sqlite_connection()
+
     async def save(self, usuario: Usuario) -> None:
-        async with get_sqlite_connection() as conn:
+        async with self._conn() as conn:
             await conn.execute(
                 "INSERT OR REPLACE INTO usuarios (id, email, name, role, is_active, password_hash) "
                 "VALUES (?, ?, ?, ?, ?, ?)",
@@ -27,7 +39,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
             await conn.commit()
 
     async def find_by_id(self, user_id: UserId) -> Usuario | None:
-        async with get_sqlite_connection() as conn:
+        async with self._conn() as conn:
             cursor = await conn.execute(
                 "SELECT id, email, name, role, is_active, password_hash FROM usuarios WHERE id = ?",
                 (str(user_id),),
@@ -36,7 +48,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
         return self._row_to_usuario(row) if row else None
 
     async def find_by_email(self, email: Email) -> Usuario | None:
-        async with get_sqlite_connection() as conn:
+        async with self._conn() as conn:
             cursor = await conn.execute(
                 "SELECT id, email, name, role, is_active, password_hash FROM usuarios WHERE email = ?",
                 (str(email),),
@@ -45,7 +57,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
         return self._row_to_usuario(row) if row else None
 
     async def list(self) -> list[Usuario]:
-        async with get_sqlite_connection() as conn:
+        async with self._conn() as conn:
             cursor = await conn.execute(
                 "SELECT id, email, name, role, is_active, password_hash FROM usuarios ORDER BY email"
             )
@@ -53,7 +65,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
         return [self._row_to_usuario(row) for row in rows]
 
     async def delete(self, user_id: UserId) -> None:
-        async with get_sqlite_connection() as conn:
+        async with self._conn() as conn:
             await conn.execute(
                 "DELETE FROM usuarios WHERE id = ?",
                 (str(user_id),),

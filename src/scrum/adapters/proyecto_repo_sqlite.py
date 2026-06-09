@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 import aiosqlite
 
 from src.db.connection import get_sqlite_connection
 from src.scrum.infrastructure.outbox import serialize_event
+from src.shared_kernel.infrastructure.cache import TTLCache
+
+if TYPE_CHECKING:
+    from src.db.pool import AsyncSQLitePool
 from src.scrum.domain.entities import (
     HistoriaDeUsuario,
     HistoriaId,
@@ -60,9 +65,22 @@ def _row_to_historia(row: aiosqlite.Row) -> HistoriaDeUsuario:
     )
 
 
+_proyecto_list_cache: TTLCache[list[dict[str, Any]]] = TTLCache[list[dict[str, Any]]](ttl_seconds=15.0, maxsize=1)
+_PROYECTO_LIST_CACHE_KEY = "list_proyectos"
+
+
 class ProyectoRepositorySQLite(ProyectoRepository):
+    def __init__(self, pool: AsyncSQLitePool | None = None) -> None:
+        self._pool = pool
+
+    def _conn(self):
+        if self._pool is not None:
+            return self._pool.connection()
+        return get_sqlite_connection()
+
     async def save(self, proyecto: Proyecto) -> None:
-        async with get_sqlite_connection() as conn:
+        await _proyecto_list_cache.invalidate(_PROYECTO_LIST_CACHE_KEY)
+        async with self._conn() as conn:
             await conn.execute(
                 "INSERT OR REPLACE INTO proyectos (id, nombre) VALUES (?, ?)",
                 (str(proyecto.id), str(proyecto.nombre)),
@@ -121,7 +139,7 @@ class ProyectoRepositorySQLite(ProyectoRepository):
             await conn.commit()
 
     async def find_by_id(self, proyecto_id: ProyectoId) -> Proyecto | None:
-        async with get_sqlite_connection() as conn:
+        async with self._conn() as conn:
             cursor = await conn.execute(
                 "SELECT id, nombre FROM proyectos WHERE id = ?",
                 (str(proyecto_id),),
@@ -160,15 +178,20 @@ class ProyectoRepositorySQLite(ProyectoRepository):
             return proyecto
 
     async def list(self) -> list[Proyecto]:
-        async with get_sqlite_connection() as conn:
+        cached = await _proyecto_list_cache.get(_PROYECTO_LIST_CACHE_KEY)
+        if cached is not None:
+            return [_row_to_proyecto(row) for row in cached]
+        async with self._conn() as conn:
             cursor = await conn.execute(
                 "SELECT id, nombre FROM proyectos ORDER BY nombre"
             )
             rows = await cursor.fetchall()
+        await _proyecto_list_cache.set(_PROYECTO_LIST_CACHE_KEY, rows)
         return [_row_to_proyecto(row) for row in rows]
 
     async def delete(self, proyecto_id: ProyectoId) -> None:
-        async with get_sqlite_connection() as conn:
+        await _proyecto_list_cache.invalidate(_PROYECTO_LIST_CACHE_KEY)
+        async with self._conn() as conn:
             await conn.execute(
                 "DELETE FROM tareas_tecnicas "
                 "WHERE historia_id IN (SELECT id FROM historias WHERE proyecto_id = ?)",

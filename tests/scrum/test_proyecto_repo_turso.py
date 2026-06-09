@@ -29,8 +29,11 @@ async def setup_db():
     if is_turso_enabled():
         async with get_turso_client() as client:
             await client.execute("DROP TABLE IF EXISTS tareas_tecnicas")
+            await client.execute("DROP TABLE IF EXISTS outbox_events")
+            await client.execute("DROP TABLE IF EXISTS proyecto_read_model")
             await client.execute("DROP TABLE IF EXISTS historias")
             await client.execute("DROP TABLE IF EXISTS sprints")
+            await client.execute("DROP TABLE IF EXISTS usuarios")
             await client.execute("DROP TABLE IF EXISTS proyectos")
 
 
