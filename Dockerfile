@@ -16,5 +16,7 @@ ENV PATH=/root/.local/bin:$PATH \
     PORT=8000
 
 EXPOSE 8000
+EXPOSE 8100
 
+# Default: run Litestar API
 CMD python -m uvicorn src.entrypoint.app:create_app --factory --host 0.0.0.0 --port $PORT

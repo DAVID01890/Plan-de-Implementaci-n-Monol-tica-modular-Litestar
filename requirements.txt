@@ -8,3 +8,4 @@ python-dotenv>=1.0
 httpx>=0.28
 pyjwt>=2.13
 bcrypt>=5.0
+mcp>=1.27.0
