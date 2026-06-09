@@ -1,10 +1,10 @@
 # ▶️ Próxima Sesión — Handoff
 
-## Sesión 19: Testing y Refinamiento
+## Sesión 20: Optimización y Performance
 
-**Objetivo:** Agregar tests para auth (login/register, token inválido, expirado), mejorar cobertura de middleware, y refinar manejo de errores.
+**Objetivo:** Connection pooling, caching de consultas frecuentes, y profiling básico.
 
-**Criterio de éxito:** Tests cubren flujos de auth (registro, login, token inválido, sin token); cobertura >90% en módulos entrypoint.
+**Criterio de éxito:** Reducción de latencia en endpoints críticos; conexiones a DB reutilizadas.
 
 ## Estado actual del proyecto
 
@@ -17,16 +17,16 @@
 - ✅ Sesión 15: Configuración centralizada (Settings dataclass, plugins Litestar, eliminar deprecation warnings)
 - ✅ Sesión 16: Controladores HTTP (ProyectoController) + RequestLoggingMiddleware
 - ✅ Sesión 17: Auth JWT — Login, Register, JWTAuth middleware, password hashing (bcrypt)
-- ✅ **Sesión 18: CORS, Seguridad y Variables de Entorno** — CORS, security headers, JWT secret desde env, AUTH_PROVIDER
-- Suite: **212 tests passing, 0 skipped, 0 warnings**
+- ✅ Sesión 18: CORS, Seguridad y Variables de Entorno — CORS, security headers, JWT secret desde env, AUTH_PROVIDER
+- ✅ **Sesión 19: Testing y Refinamiento** — Tests de auth (12) y middleware (5), 227 tests total
+- Suite: **227 tests passing, 0 skipped, 0 warnings**
 
 ## Contexto relevante
 
-- CORS abierto (`allow_origins=["*"]`) — restringir antes de producción
-- Security headers activos: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
-- `.env` acepta `JWT_SECRET`, `JWT_ALGORITHM`, `AUTH_PROVIDER`
-- `AUTH_PROVIDER` declarado en Settings pero sin efecto todavía
-- Faltan tests específicos para auth (login fallido, token expirado, rutas sin auth)
+- `get_sqlite_connection()` abre/cierra conexión por operación — overhead evitable
+- `UsuarioRepositorySQLite` en `retrieve_user_handler` crea repo nuevo por request
+- OutboxWorker ya tiene polling configurable; posibles cuellos de botella en DB compartida
+- Sin caché de consultas (p.ej. `list_proyectos` siempre a DB)
 
 ## Formato de bitácora
 
