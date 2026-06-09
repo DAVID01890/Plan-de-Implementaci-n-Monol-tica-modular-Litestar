@@ -7,6 +7,13 @@ from litestar.testing import TestClient
 from src.entrypoint.app import create_app
 
 
+def _auth_headers(client: TestClient) -> dict[str, str]:
+    client.post("/auth/register", json={"email": "test@example.com", "password": "secret123"})
+    resp = client.post("/auth/login", json={"email": "test@example.com", "password": "secret123"})
+    token = resp.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
 def _client():
     os.environ.pop("TURSO_DATABASE_URL", None)
     os.environ.pop("TURSO_AUTH_TOKEN", None)
@@ -19,7 +26,8 @@ def _client():
 
 def test_create_proyecto() -> None:
     with _client() as client:
-        response = client.post("/proyectos", json={"nombre": "Mi Proyecto"})
+        headers = _auth_headers(client)
+        response = client.post("/proyectos", json={"nombre": "Mi Proyecto"}, headers=headers)
     assert response.status_code == 201
     data = response.json()
     assert data["nombre"] == "Mi Proyecto"
@@ -28,39 +36,45 @@ def test_create_proyecto() -> None:
 
 def test_get_proyecto() -> None:
     with _client() as client:
-        created = client.post("/proyectos", json={"nombre": "Test"}).json()
-        response = client.get(f"/proyectos/{created['id']}")
+        headers = _auth_headers(client)
+        created = client.post("/proyectos", json={"nombre": "Test"}, headers=headers).json()
+        response = client.get(f"/proyectos/{created['id']}", headers=headers)
     assert response.status_code == 200
     assert response.json()["nombre"] == "Test"
 
 
 def test_get_nonexistent_proyecto() -> None:
     with _client() as client:
-        response = client.get("/proyectos/00000000-0000-0000-0000-000000000000")
+        headers = _auth_headers(client)
+        response = client.get("/proyectos/00000000-0000-0000-0000-000000000000", headers=headers)
     assert response.status_code == 404
 
 
 def test_delete_proyecto() -> None:
     with _client() as client:
-        created = client.post("/proyectos", json={"nombre": "To Delete"}).json()
-        delete_resp = client.delete(f"/proyectos/{created['id']}")
-        get_resp = client.get(f"/proyectos/{created['id']}")
+        headers = _auth_headers(client)
+        created = client.post("/proyectos", json={"nombre": "To Delete"}, headers=headers).json()
+        delete_resp = client.delete(f"/proyectos/{created['id']}", headers=headers)
+        get_resp = client.get(f"/proyectos/{created['id']}", headers=headers)
     assert delete_resp.status_code == 200
     assert get_resp.status_code == 404
 
 
 def test_create_proyecto_with_invalid_nombre() -> None:
     with _client() as client:
-        response = client.post("/proyectos", json={"nombre": ""})
+        headers = _auth_headers(client)
+        response = client.post("/proyectos", json={"nombre": ""}, headers=headers)
     assert response.status_code == 400
 
 
 def test_add_historia() -> None:
     with _client() as client:
-        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        headers = _auth_headers(client)
+        proyecto = client.post("/proyectos", json={"nombre": "P"}, headers=headers).json()
         response = client.post(
             f"/proyectos/{proyecto['id']}/historias",
             json={"titulo": "Feature 1", "story_points": 5},
+            headers=headers,
         )
     assert response.status_code == 201
     data = response.json()
@@ -70,10 +84,12 @@ def test_add_historia() -> None:
 
 def test_create_sprint() -> None:
     with _client() as client:
-        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        headers = _auth_headers(client)
+        proyecto = client.post("/proyectos", json={"nombre": "P"}, headers=headers).json()
         response = client.post(
             f"/proyectos/{proyecto['id']}/sprints",
             json={"nombre": "Sprint 1"},
+            headers=headers,
         )
     assert response.status_code == 201
     data = response.json()
@@ -83,14 +99,17 @@ def test_create_sprint() -> None:
 
 def test_add_historia_to_sprint() -> None:
     with _client() as client:
-        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        headers = _auth_headers(client)
+        proyecto = client.post("/proyectos", json={"nombre": "P"}, headers=headers).json()
         historia = client.post(
             f"/proyectos/{proyecto['id']}/historias",
             json={"titulo": "H", "story_points": 3},
+            headers=headers,
         ).json()
         sprint = client.post(
             f"/proyectos/{proyecto['id']}/sprints",
             json={"nombre": "S1"},
+            headers=headers,
         ).json()
         response = client.post(
             f"/proyectos/{proyecto['id']}/sprints/historias",
@@ -98,6 +117,7 @@ def test_add_historia_to_sprint() -> None:
                 "historia_id": historia["historias"][0]["id"],
                 "sprint_id": sprint["sprints"][0]["id"],
             },
+            headers=headers,
         )
     assert response.status_code == 201
     sprint_data = response.json()["sprints"][0]
@@ -106,14 +126,17 @@ def test_add_historia_to_sprint() -> None:
 
 def test_start_sprint() -> None:
     with _client() as client:
-        proyecto = client.post("/proyectos", json={"nombre": "P"}).json()
+        headers = _auth_headers(client)
+        proyecto = client.post("/proyectos", json={"nombre": "P"}, headers=headers).json()
         sprint = client.post(
             f"/proyectos/{proyecto['id']}/sprints",
             json={"nombre": "S1"},
+            headers=headers,
         ).json()
         sprint_id = sprint["sprints"][0]["id"]
         response = client.post(
-            f"/proyectos/{proyecto['id']}/sprints/{sprint_id}/start"
+            f"/proyectos/{proyecto['id']}/sprints/{sprint_id}/start",
+            headers=headers,
         )
     assert response.status_code == 201
     sprint_data = response.json()["sprints"][0]

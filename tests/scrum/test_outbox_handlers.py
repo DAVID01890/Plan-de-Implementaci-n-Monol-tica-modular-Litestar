@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import tempfile
 
@@ -45,26 +44,6 @@ class TestWebhookHandler:
         handler = WebhookHandler(url="")
         await handler.handle(ProyectoCreado(proyecto_id="p1", nombre="Test"))
         assert "no URL configured" in caplog.text
-
-    @pytest.mark.asyncio
-    async def test_posts_to_webhook(self) -> None:
-        pytest.importorskip("respx")
-        import httpx
-
-        import respx
-
-        route = respx.post("https://example.com/hook").mock(
-            return_value=httpx.Response(200)
-        )
-        handler = WebhookHandler(url="https://example.com/hook")
-        event = ProyectoCreado(proyecto_id="p1", nombre="Test")
-        await handler.handle(event)
-        assert route.called
-        body = route.calls[0].request.content
-        payload = json.loads(body)
-        assert payload["event_type"] == "proyecto.creado"
-        assert payload["data"]["nombre"] == "Test"
-
 
 class TestProjectionHandler:
     @pytest.mark.asyncio

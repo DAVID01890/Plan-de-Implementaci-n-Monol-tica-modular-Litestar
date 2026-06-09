@@ -6,3 +6,5 @@ libsql-client>=0.3
 alembic>=1.14
 python-dotenv>=1.0
 httpx>=0.28
+pyjwt>=2.13
+bcrypt>=5.0

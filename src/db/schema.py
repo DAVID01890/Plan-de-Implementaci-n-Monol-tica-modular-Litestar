@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'developer',
-    is_active INTEGER NOT NULL DEFAULT 1
+    is_active INTEGER NOT NULL DEFAULT 1,
+    password_hash TEXT
 );
 
 CREATE TABLE IF NOT EXISTS outbox_events (

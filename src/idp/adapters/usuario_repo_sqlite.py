@@ -13,14 +13,15 @@ class UsuarioRepositorySQLite(UsuarioRepository):
     async def save(self, usuario: Usuario) -> None:
         async with get_sqlite_connection() as conn:
             await conn.execute(
-                "INSERT OR REPLACE INTO usuarios (id, email, name, role, is_active) "
-                "VALUES (?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO usuarios (id, email, name, role, is_active, password_hash) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
                 (
                     str(usuario.id),
                     str(usuario.email),
                     str(usuario.name),
                     usuario.role.value,
                     1 if usuario.is_active else 0,
+                    usuario.password_hash,
                 ),
             )
             await conn.commit()
@@ -28,7 +29,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
     async def find_by_id(self, user_id: UserId) -> Usuario | None:
         async with get_sqlite_connection() as conn:
             cursor = await conn.execute(
-                "SELECT id, email, name, role, is_active FROM usuarios WHERE id = ?",
+                "SELECT id, email, name, role, is_active, password_hash FROM usuarios WHERE id = ?",
                 (str(user_id),),
             )
             row = await cursor.fetchone()
@@ -37,7 +38,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
     async def find_by_email(self, email: Email) -> Usuario | None:
         async with get_sqlite_connection() as conn:
             cursor = await conn.execute(
-                "SELECT id, email, name, role, is_active FROM usuarios WHERE email = ?",
+                "SELECT id, email, name, role, is_active, password_hash FROM usuarios WHERE email = ?",
                 (str(email),),
             )
             row = await cursor.fetchone()
@@ -46,7 +47,7 @@ class UsuarioRepositorySQLite(UsuarioRepository):
     async def list(self) -> list[Usuario]:
         async with get_sqlite_connection() as conn:
             cursor = await conn.execute(
-                "SELECT id, email, name, role, is_active FROM usuarios ORDER BY email"
+                "SELECT id, email, name, role, is_active, password_hash FROM usuarios ORDER BY email"
             )
             rows = await cursor.fetchall()
         return [self._row_to_usuario(row) for row in rows]
@@ -67,4 +68,5 @@ class UsuarioRepositorySQLite(UsuarioRepository):
             name=NotEmptyString(row["name"]),
             role=UserRole(row["role"]),
             is_active=bool(row["is_active"]),
+            password_hash=row["password_hash"],
         )

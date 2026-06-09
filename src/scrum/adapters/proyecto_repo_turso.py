@@ -5,7 +5,7 @@ from uuid import UUID
 
 from libsql_client import create_client
 
-from src.db.connection import is_turso_enabled
+from src.entrypoint.config import Settings
 from src.scrum.domain.entities import (
     HistoriaDeUsuario,
     HistoriaId,
@@ -70,15 +70,14 @@ def _row_to_historia(
 
 
 class ProyectoRepositorioTurso(ProyectoRepository):
-    def __init__(self) -> None:
-        if not is_turso_enabled():
+    def __init__(self, settings: Settings | None = None) -> None:
+        s = settings if settings is not None else Settings.from_env()
+        if not s.is_turso_enabled:
             raise RuntimeError(
                 "Turso is not configured. Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN."
             )
-        from src.db.connection import _turso_url, _turso_token
-
-        self._url = _normalize_url(_turso_url())
-        self._token = _turso_token()
+        self._url = _normalize_url(s.turso_url)
+        self._token = s.turso_token
 
     async def save(self, proyecto: Proyecto) -> None:
         stmts: list[tuple[str, tuple]] = [
