@@ -125,7 +125,9 @@ def _build_lifespan(settings: Settings):
         handlers: list = [LoggingHandler()]
         if settings.outbox_webhook_url:
             handlers.append(WebhookHandler(settings.outbox_webhook_url))
-        if not settings.is_turso_enabled and conn is not None:
+        if settings.is_turso_enabled:
+            handlers.append(ProjectionHandler(client))
+        elif conn is not None:
             handlers.append(ProjectionHandler(conn))
 
         worker = OutboxWorker(outbox_client, handlers=handlers)

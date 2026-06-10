@@ -83,4 +83,5 @@ class ProjectionHandler(OutboxEventHandler):
                 (data["sprint_id"], data["fecha_inicio"], now, data["proyecto_id"]),
             )
 
-        await self._conn.commit()
+        if hasattr(self._conn, "commit"):
+            await self._conn.commit()

@@ -23,11 +23,11 @@ class TursoOutboxClient(OutboxClient):
                 event_id = row["id"]
             except (KeyError, IndexError, TypeError):
                 continue
-                try:
-                    processed_at = row["processed_at"]
-                except (KeyError, IndexError, TypeError):
-                    processed_at = None
-                events.append(
+            try:
+                processed_at = row["processed_at"]
+            except (KeyError, IndexError, TypeError):
+                processed_at = None
+            events.append(
                 OutboxEvent(
                     id=event_id,
                     aggregate_id=row["aggregate_id"],
@@ -42,10 +42,10 @@ class TursoOutboxClient(OutboxClient):
 
     async def mark_as_processed(self, event_id: str) -> None:
         now = datetime.now(timezone.utc).isoformat()
-        stmts = [
-            {
-                "q": "UPDATE outbox_events SET processed_at = ? WHERE id = ?",
-                "params": [now, event_id],
-            }
+        stmts: list[tuple[str, tuple]] = [
+            (
+                "UPDATE outbox_events SET processed_at = ? WHERE id = ?",
+                (now, event_id),
+            )
         ]
         await self._client.batch(stmts)
