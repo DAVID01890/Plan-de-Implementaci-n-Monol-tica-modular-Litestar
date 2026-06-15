@@ -10,7 +10,7 @@ from litestar.config.cors import CORSConfig
 from litestar.di import Provide
 
 from src.entrypoint.auth.guards import jwt_auth
-from src.entrypoint.auth.handlers import login, register
+from src.entrypoint.auth.handlers import login, me, register
 from src.entrypoint.config import Settings
 from src.entrypoint.middleware import RequestLoggingMiddleware, SecurityHeadersMiddleware
 from src.entrypoint.scrum.handlers import ProyectoController
@@ -167,6 +167,7 @@ def create_app() -> Litestar:
             profile,
             login,
             register,
+            me,
             ProyectoController,
         ],
         on_app_init=[_on_app_init, jwt_auth.on_app_init],

@@ -8,7 +8,7 @@ from src.entrypoint.app import create_app
 
 
 def _auth_headers(client: TestClient) -> dict[str, str]:
-    client.post("/auth/register", json={"email": "test@example.com", "password": "secret123"})
+    client.post("/auth/register", json={"name": "Test", "email": "test@example.com", "password": "secret123"})
     resp = client.post("/auth/login", json={"email": "test@example.com", "password": "secret123"})
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}

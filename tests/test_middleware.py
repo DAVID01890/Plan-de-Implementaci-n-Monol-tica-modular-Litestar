@@ -18,7 +18,7 @@ def _client():
 
 
 def _auth_headers(client: TestClient) -> dict[str, str]:
-    client.post("/auth/register", json={"email": "mw@example.com", "password": "secret"})
+    client.post("/auth/register", json={"name": "MW", "email": "mw@example.com", "password": "secret"})
     resp = client.post("/auth/login", json={"email": "mw@example.com", "password": "secret"})
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from litestar import post
+from litestar import get, post
+from litestar.connection import ASGIConnection
 from litestar.exceptions import HTTPException
 
 from src.entrypoint.auth.guards import jwt_auth
-from src.entrypoint.auth.schemas import LoginRequest, LoginResponse
+from src.entrypoint.auth.schemas import LoginRequest, LoginResponse, RegisterRequest, UserResponse
 from src.idp.domain.entities import Usuario
 from src.idp.domain.value_objects import UserRole
 from src.idp.ports.usuario_repository import UsuarioRepository
@@ -26,17 +27,36 @@ async def login(
     if not user.is_active:
         raise HTTPException(status_code=401, detail="Account is inactive")
     token = jwt_auth.create_token(identifier=str(user.id))
-    return LoginResponse(access_token=token)
+    return LoginResponse(
+        access_token=token,
+        user=UserResponse(
+            id=str(user.id),
+            email=str(user.email),
+            name=str(user.name),
+            role=user.role.value,
+        ),
+    )
+
+
+@get("/auth/me")
+async def me(request: ASGIConnection) -> UserResponse:
+    user: Usuario = request.user
+    return UserResponse(
+        id=str(user.id),
+        email=str(user.email),
+        name=str(user.name),
+        role=user.role.value,
+    )
 
 
 @post("/auth/register", exclude_from_auth=True)
 async def register(
-    data: LoginRequest,
+    data: RegisterRequest,
     usuario_repo: UsuarioRepository,
-) -> dict[str, str]:
+) -> LoginResponse:
     try:
         email = Email(data.email)
-        name = NotEmptyString(data.email.split("@")[0])
+        name = NotEmptyString(data.name)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid email")
     existing = await usuario_repo.find_by_email(email)
@@ -45,4 +65,13 @@ async def register(
     user = Usuario(email=email, name=name, role=UserRole.DEVELOPER)
     user.set_password(data.password)
     await usuario_repo.save(user)
-    return {"id": str(user.id), "email": str(user.email)}
+    token = jwt_auth.create_token(identifier=str(user.id))
+    return LoginResponse(
+        access_token=token,
+        user=UserResponse(
+            id=str(user.id),
+            email=str(user.email),
+            name=str(user.name),
+            role=user.role.value,
+        ),
+    )

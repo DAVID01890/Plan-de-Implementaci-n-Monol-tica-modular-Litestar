@@ -19,40 +19,40 @@ def _client():
 
 def test_register_success() -> None:
     with _client() as client:
-        response = client.post("/auth/register", json={"email": "new@example.com", "password": "pass123"})
+        response = client.post("/auth/register", json={"name": "New User", "email": "new@example.com", "password": "pass123"})
     assert response.status_code == 201
     data = response.json()
-    assert "id" in data
-    assert data["email"] == "new@example.com"
+    assert "access_token" in data
+    assert data["user"]["email"] == "new@example.com"
 
 
 def test_register_duplicate_email() -> None:
     with _client() as client:
-        client.post("/auth/register", json={"email": "dup@example.com", "password": "pass123"})
-        response = client.post("/auth/register", json={"email": "dup@example.com", "password": "other456"})
+        client.post("/auth/register", json={"name": "Dup", "email": "dup@example.com", "password": "pass123"})
+        response = client.post("/auth/register", json={"name": "Dup2", "email": "dup@example.com", "password": "other456"})
     assert response.status_code == 409
     assert "already registered" in response.json()["detail"]
 
 
 def test_register_invalid_email() -> None:
     with _client() as client:
-        response = client.post("/auth/register", json={"email": "not-an-email", "password": "pass123"})
+        response = client.post("/auth/register", json={"name": "Bad", "email": "not-an-email", "password": "pass123"})
     assert response.status_code == 400
 
 
 def test_login_success() -> None:
     with _client() as client:
-        client.post("/auth/register", json={"email": "login@example.com", "password": "secret123"})
+        client.post("/auth/register", json={"name": "Login", "email": "login@example.com", "password": "secret123"})
         response = client.post("/auth/login", json={"email": "login@example.com", "password": "secret123"})
     assert response.status_code == 201
     data = response.json()
     assert "access_token" in data
-    assert data["token_type"] == "Bearer"
+    assert "user" in data
 
 
 def test_login_wrong_password() -> None:
     with _client() as client:
-        client.post("/auth/register", json={"email": "wp@example.com", "password": "correct"})
+        client.post("/auth/register", json={"name": "WP", "email": "wp@example.com", "password": "correct"})
         response = client.post("/auth/login", json={"email": "wp@example.com", "password": "wrong"})
     assert response.status_code == 401
 
@@ -93,7 +93,20 @@ def test_health_is_public() -> None:
 
 def test_auth_routes_are_public() -> None:
     with _client() as client:
-        reg = client.post("/auth/register", json={"email": "pub@example.com", "password": "x"})
+        reg = client.post("/auth/register", json={"name": "Pub", "email": "pub@example.com", "password": "x"})
         log = client.post("/auth/login", json={"email": "pub@example.com", "password": "x"})
     assert reg.status_code == 201
     assert log.status_code == 201
+
+def test_me_returns_current_user() -> None:
+    with _client() as client:
+        reg = client.post("/auth/register", json={"name": "Me Test", "email": "me@example.com", "password": "secret123"})
+        assert reg.status_code == 201
+        token = reg.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+        me = client.get("/auth/me", headers=headers)
+        assert me.status_code == 200
+        data = me.json()
+        assert data["email"] == "me@example.com"
+        assert data["name"] == "Me Test"
+        assert data["role"] == "developer"
